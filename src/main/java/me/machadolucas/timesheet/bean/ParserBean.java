@@ -1,15 +1,10 @@
 package me.machadolucas.timesheet.bean;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.annotation.ManagedBean;
-import javax.faces.bean.SessionScoped;
 
 import lombok.Data;
 import me.machadolucas.timesheet.entity.Day;
@@ -18,60 +13,53 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 @Data
-@ManagedBean
-@SessionScoped
+@Component
 public class ParserBean {
-
-    private String inputUolTable;
 
     private Document doc;
 
-    private List<Day> parsedDays = new LinkedList<>();
-    private Duration totalWorkDuration = Duration.ZERO;
+    public List<Day> processInputUolTable(final String inputUolTable) {
 
-    public void processInputUolTable() {
+        final List<Day> parsedDays = new LinkedList<>();
 
-        doc = Jsoup.parse(inputUolTable);
+        this.doc = Jsoup.parse(inputUolTable);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        totalWorkDuration = Duration.ZERO;
+        Duration totalWorkDuration = Duration.ZERO;
 
-        try {
-            Elements dateLines = doc.getElementsByAttributeValue("lv", "1");
-            for (Element dateLine : dateLines) {
-                String dateString = dateLine.select("table td").get(1).text().substring(1, 11);
-                Date dayDate = dateFormat.parse(dateString);
+        final Elements dateLines = this.doc.getElementsByAttributeValue("lv", "1");
+        for (final Element dateLine : dateLines) {
+            final String dateString = dateLine.select("table td").get(1).text().substring(1, 11);
+            final LocalDate dayDate = LocalDate.parse(dateString, dateFormat);
 
-                String workDurationString = dateLine.nextElementSibling().child(0).text();
+            final String workDurationString = dateLine.nextElementSibling().child(0).text();
 
-                Day day = new Day();
-                day.setDay(dayDate);
-                day.setWorkDuration(parse(workDurationString));
+            final Day day = new Day();
+            day.setDay(dayDate);
+            day.setWorkDuration(parse(workDurationString));
 
-                parsedDays.add(day);
-            }
-
-            for (Day day : parsedDays) {
-                totalWorkDuration = totalWorkDuration.plus(day.getWorkDuration());
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
+            parsedDays.add(day);
         }
 
+        for (final Day day : parsedDays) {
+            totalWorkDuration = totalWorkDuration.plus(day.getWorkDuration());
+        }
+        return parsedDays;
     }
 
-    public static Duration parse(String input) {
-        int colonIndex = input.indexOf(':');
+    private static Duration parse(final String input) {
+        final int colonIndex = input.indexOf(':');
         String hh = input.substring(0, colonIndex);
-        String mm = input.substring(colonIndex + 1);
-        boolean isNegative = hh.charAt(0) == '-';
+        final String mm = input.substring(colonIndex + 1);
+        final boolean isNegative = hh.charAt(0) == '-';
         if (isNegative) {
             hh = hh.substring(1);
         }
-        StringBuffer parseString = new StringBuffer();
+        final StringBuffer parseString = new StringBuffer();
         if (isNegative) {
             parseString.append("-");
         }

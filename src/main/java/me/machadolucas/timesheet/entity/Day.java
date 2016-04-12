@@ -1,7 +1,8 @@
 package me.machadolucas.timesheet.entity;
 
 import java.time.Duration;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.Data;
 @Data
 public class Day {
 
-    Date day;
+    LocalDate day;
     Duration workDuration;
-    List<Date> timestamps;
+    List<LocalTime> timestamps;
 }

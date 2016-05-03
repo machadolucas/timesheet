@@ -29,8 +29,6 @@ public class ParserBean {
 
         final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        Duration totalWorkDuration = Duration.ZERO;
-
         final Elements dateLines = this.doc.getElementsByAttributeValue("lv", "1");
         for (final Element dateLine : dateLines) {
             final String dateString = dateLine.select("table td").get(1).text().substring(1, 11);
@@ -45,9 +43,6 @@ public class ParserBean {
             parsedDays.add(day);
         }
 
-        for (final Day day : parsedDays) {
-            totalWorkDuration = totalWorkDuration.plus(day.getWorkDuration());
-        }
         return parsedDays;
     }
 

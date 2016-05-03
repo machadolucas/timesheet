@@ -1,5 +1,7 @@
 package me.machadolucas.timesheet.view;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -25,8 +27,12 @@ import com.vaadin.ui.themes.ValoTheme;
 @SpringUI(path = "/")
 public class HomeView extends UI {
 
-    private TextArea textArea = new TextArea();
-    private Table results = new Table();
+    private final TextArea textArea = new TextArea();
+    private final Table results = new Table();
+
+    private final Label totalWorkDurationLabel = new Label();
+
+    private Duration totalWorkDuration = Duration.ZERO;
 
     @Autowired
     private ParserBean parserBean;
@@ -65,12 +71,36 @@ public class HomeView extends UI {
         marginLayoutButton.addComponent(calculate);
         marginLayoutButton.setComponentAlignment(calculate, Alignment.MIDDLE_CENTER);
 
-        layout.addComponents(title, marginLayoutInput, marginLayoutButton, this.results);
+        this.results.addContainerProperty("Data", LocalDate.class, null);
+        this.results.addContainerProperty("Saldo", Duration.class, null);
+        // this.results.addContainerProperty("Marcações", String.class, null);
+
+        layout.addComponents(title, marginLayoutInput, marginLayoutButton, this.results, this.totalWorkDurationLabel);
         setContent(layout);
     }
 
     private void calculate(final Button.ClickEvent event) {
+
         final List<Day> days = this.parserBean.processInputUolTable(this.textArea.getValue());
+        this.results.removeAllItems();
+
+        days.forEach(day -> {
+            // final StringBuilder markers = new StringBuilder();
+            // day.getTimestamps().forEach(stamp -> {
+            // markers.append(stamp).append(", ");
+            // });
+
+            this.results.addItem(new Object[] { day.getDay(), day.getWorkDuration() }, day);
+
+            this.totalWorkDuration = this.totalWorkDuration.plus(day.getWorkDuration());
+        });
+
+        this.results.setPageLength(this.results.size());
+
+        this.textArea.setValue("");
+
+        this.totalWorkDurationLabel.setValue("Saldo mensal: " + this.totalWorkDuration.toString());
+
     }
 
 }

@@ -3,6 +3,7 @@ package me.machadolucas.timesheet.entity;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.LinkedList;
 import java.util.List;
 
 import lombok.Data;
@@ -12,5 +13,5 @@ public class Day {
 
     LocalDate day;
     Duration workDuration;
-    List<LocalTime> timestamps;
+    List<LocalTime> timestamps = new LinkedList<>();
 }

@@ -6,9 +6,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import me.machadolucas.timesheet.bean.ParserBean;
-import me.machadolucas.timesheet.entity.Day;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.server.Page;
@@ -23,6 +20,9 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+
+import me.machadolucas.timesheet.bean.ParserBean;
+import me.machadolucas.timesheet.entity.Day;
 
 @SpringUI(path = "/")
 public class HomeView extends UI {
@@ -83,6 +83,8 @@ public class HomeView extends UI {
 
         final List<Day> days = this.parserBean.processInputUolTable(this.textArea.getValue());
         this.results.removeAllItems();
+
+        this.totalWorkDuration = Duration.ZERO;
 
         days.forEach(day -> {
             // final StringBuilder markers = new StringBuilder();

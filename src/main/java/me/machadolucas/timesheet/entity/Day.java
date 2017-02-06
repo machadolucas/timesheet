@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class Day {
 
-    LocalDate day;
-    Duration workDuration;
-    List<LocalTime> timestamps = new LinkedList<>();
+    private LocalDate day;
+    private Duration workDuration;
+    private List<LocalTime> timestamps = new LinkedList<>();
 }

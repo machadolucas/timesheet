@@ -1,0 +1,44 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.1.RELEASE'
+    }
+    repositories {
+        maven { url "http://repo.maven.apache.org/maven2" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+group = 'me.machadolucas'
+version = '1.2.0'
+
+description = "timesheet"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+
+repositories {
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-actuator'
+    compile group: 'com.vaadin', name: 'vaadin-spring-boot-starter', version:'2.0.0'
+    compile group: 'com.vaadin', name: 'vaadin-themes', version:'8.0.0'
+    compile group: 'com.vaadin', name: 'vaadin-client-compiled', version:'8.0.0'
+    compile group: 'com.vaadin', name: 'vaadin-server', version:'8.0.0'
+
+    compile group: 'org.projectlombok', name: 'lombok'
+
+    compile group: 'org.jsoup', name: 'jsoup', version:'1.10.2'
+}
